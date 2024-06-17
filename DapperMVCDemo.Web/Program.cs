@@ -1,3 +1,4 @@
+using DapperMVCDemo.Data.DataAccess;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -30,6 +31,7 @@ try
 
     // Add services to the container.
     builder.Services.AddControllersWithViews();
+    builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
 
     var app = builder.Build();
 
@@ -52,6 +54,7 @@ try
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
 
+    Log.Information("Web Application Running...");
     app.Run();
 
 }
