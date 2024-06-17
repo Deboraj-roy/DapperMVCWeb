@@ -1,0 +1,123 @@
+---------------------------------------------------------------------------------------------------------------------------
+1. Suppose XYZ company has a rule stating that a employee’s salary cannot be changed by more than 20% of the original salary if his/her experience is less than 5 years. Create a trigger ‘salary_change_monitoring’ to enforce this constraint. The trigger fires whenever there is an update to the emp table and outputs a suitable error message when the rule is violated. 
+***************************************************************************************************************
+
+create or replace trigger salary_change_monitoring 
+before update or delete or insert on emp 
+for each row 
+declare 
+exp number; 
+begin 
+exp:=(sysdate-:old.hiredate)/365; 
+if 
+exp<100 and :new.sal>(:old.sal+(:old.sal*.20)) 
+then 
+raise_application_error(-20201,'errorSal'); 
+end if; 
+end
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+2. Write database triggers that checks that qty_on_hnd does not become negative.
+
+***************************************************************************************************************
+
+create or replace trigger qty_on_hnd 
+before update or insert on product_master 
+for each row 
+begin 
+if :new.qty <0 
+then 
+raise_application_error(-20202,'negQOH'); 
+end if; 
+end;
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+3. A trigger occurs when ever an insert or update occurs in bookself table and insert the old and new data in the bookself_audit table.
+***************************************************************************************************************
+
+
+create table product_master
+(
+	pno varchar2(5),
+	dsc varchar2(10),
+	profit_percent number(3),
+	unit_measure varchar2(10),
+	qoh number(4),
+	reorderlevel number(8),
+	sell_price number(8),
+	cose_price number(8)
+);
+
+create table bookself
+(
+	Title varchar2(6),
+	publisher varchar2(6),
+	rating varchar2(5)
+);
+create table bookself_audit
+(
+	Title varchar2(6),
+	publisher varchar2(6),
+	old_rating varchar2(5),
+	new_rating varchar2(5),
+	audit_dt date
+)
+
+
+***************************************************************************************************************
+
+create or replace trigger bookself_op 
+before update or insert on bookself 
+for each row 
+begin 
+insert into bookself_audit values(:new.Title,:new.publisher,:new.rating,:new.rating,sysdate); 
+end;
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------
+
+4. Create 2 tables, LAB7_RESERVATIONS table with 2 columns
+***************************************************************************************************************
+Create table LAB7_RESERVATIONS
+( flight_id char(6) not null,
+ 	Customer_phone char(11) not null )
+
+ 	Create table LAB7_flights
+( flight_id char(6) not null,
+ 	Seats  number(3) not null,
+Primary key (flight_id) )
+
+Insert into LAB7_flights values (ACO529,120);
+Insert into LAB7_flights values (ACO529,120);
+
+---------------------------------------------------------------------------------------------------------------------------
+Create a trigger LAB7_RES_TRG that will ensure that when a new row is inserted into the 
+LAB7_RESERVATIONS table, the flight id is in the LAB7_FLIGHTS table and that the number 
+of seats on this flight, SEATS is greater than 0. Here are the details of how the trigger should 
+behave: 
+	If flight id is not in the flights table it should raise application error ‘Invalid flight id’
+	If flight id is in the flights table, (for example AC0529) but SEATS = 0, then it should raise application error ‘Flight AC0529 has no seats left’
+	If flight id is in the flights table and SEATS > 0,then it should update the appropriate row in flights table by setting SEATS = SEATS – 1 for this flight. 
+
+
+***************************************************************************************************************
+
+create or replace trigger LAB7_RES_TRG 
+before 
+insert on LAB7_RESERVATIONS 
+begin 
+select count(*) into c where flight_id=:new.flight_id; 
+select Seats into s where flight_id=:new.flight_id; 
+if c<0 then 
+raise_application_error(-20208,'Invalid flight id'); 
+end if; 
+if c>0 and s=0 then 
+raise_application_error(-20208,CONCAT('Flight ',new.flight_id,' has no seats left')); 
+end if; 
+end;

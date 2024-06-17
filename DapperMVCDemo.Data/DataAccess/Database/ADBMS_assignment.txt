@@ -1,0 +1,200 @@
+create table account
+ (account_number varchar(15) not null unique,
+ branch_name varchar(15) not null,
+ balance number not null,
+ primary key(account_number));
+
+---------------------------------------
+
+
+create table branch
+ (branch_name varchar(15) not null unique,
+ branch_city varchar(15) not null,
+ assets number not null,
+ primary key(branch_name));
+
+---------------------------------------
+
+
+create table customer
+ (customer_name varchar(15) not null unique,
+ customer_street varchar(12) not null,
+ customer_city varchar(15) not null,
+ primary key(customer_name));
+
+---------------------------------------
+
+
+create table loan
+ (loan_number varchar(15) not null unique,
+ branch_name varchar(15) not null,
+ amount number not null,
+ primary key(loan_number));
+---------------------------------------
+
+create table depositor
+ (customer_name varchar(15) not null,
+ account_number varchar(15) not null,
+ primary key(customer_name, account_number),
+ foreign key(account_number) references account(account_number),
+ foreign key(customer_name) references customer(customer_name));
+
+---------------------------------------
+
+
+create table borrower
+ (customer_name varchar(15) not null,
+ loan_number varchar(15) not null,
+ primary key(customer_name, loan_number),
+ foreign key(customer_name) references customer(customer_name),
+ foreign key(loan_number) references loan(loan_number));
+
+---------------------------------------
+
+
+Populate Relations:
+insert into customer values ('Noah', 'Main', 'Harrison');
+insert into customer values ('Olivia', 'Main', 'Rye');
+insert into customer values ('Hayes', 'Main', 'Harrison');
+insert into customer values ('Luna', 'North', 'Rye');
+insert into customer values ('Asher', 'Park', 'Pittsfield');
+insert into customer values ('Isabella', 'Putnam', 'Stamford');
+insert into customer values ('Charlotte', 'Nassau', 'Princeton');
+insert into customer values ('Mateo', 'Spring', 'Pittsfield');
+insert into customer values ('Jayden', 'Alma', 'Palo Alto');
+insert into customer values ('Grace', 'Sand Hill', 'Woodside');
+insert into customer values ('Benjamin', 'Senator', 'Brooklyn');
+insert into customer values ('Lucy', 'Walnut', 'Stamford');
+insert into customer values ('Smith', 'University', 'Salt Lake');
+
+---------------------------------------
+
+
+insert into customer values ('Maya', 'First', 'Rye');
+insert into branch values ('David', 'Brooklyn', 900000);
+insert into branch values ('Emilia', 'Palo Alto', 2100000);
+insert into branch values ('Perryridge', 'Horseneck', 1700000);
+insert into branch values ('Jaxon', 'Horseneck', 400200);
+insert into branch values ('Ezekiel', 'Horseneck', 8000000);
+
+
+---------------------------------------
+
+insert into account values ('A-101', 'David', 500);
+insert into account values ('A-215', 'Jaxon', 700);
+insert into account values ('A-102', 'Perryridge', 400);
+insert into account values ('A-305', 'Ezekiel', 350);
+insert into account values ('A-201', 'Perryridge', 900);
+insert into account values ('A-222', 'Emilia', 700);
+insert into account values ('A-217', 'Brighton', 750);
+
+---------------------------------------
+
+
+insert into depositor values ('Jayden','A-101');
+insert into depositor values ('Olivia', 'A-215');
+insert into depositor values ('Hayes', 'A-102');
+insert into depositor values ('Hayes', 'A-101');
+insert into depositor values ('Isabella', 'A-305');
+insert into depositor values ('Jayden','A-201');
+insert into depositor values ('Noah', 'A-217');
+insert into depositor values ('Asher','A-222');
+insert into depositor values ('Maya','A-333');
+insert into depositor values ('Olivia', 'A-444');
+
+---------------------------------------
+
+insert into loan values ('L-17', 'David', 1000);
+insert into loan values ('L-23', 'Emilia', 2000);
+insert into loan values ('L-15', 'Perryridge', 1500);
+insert into loan values ('L-14', 'David', 1500);
+insert into loan values ('L-93', 'Jaxon', 500);
+insert into loan values ('L-11', 'Ezekiel', 900);
+insert into loan values ('L-16', 'Perryridge', 1300);
+
+---------------------------------------
+
+
+insert into borrower values ('Noah', 'L-17');
+insert into borrower values ('Olivia', 'L-23');
+insert into borrower values ('Hayes', 'L-15');
+insert into borrower values ('Smith', 'L-14');
+insert into borrower values ('Luna', 'L-93');
+insert into borrower values ('Olivia', 'L-11');
+insert into borrower values ('Charlotte','L-17');
+insert into borrower values ('Mateo', 'L-16');
+insert into borrower values ('Olivia', 'L-21');
+
+---------------------------------------
+
+
+Sample Queries:
+1. Find the names & cities of all borrowers
+select distinct customer.customer_name, customer_city from borrower, customer 
+where borrower.customer_name = customer.customer_name;
+
+
+2. Find the names & cities of customers who have a loan at "Perryridge" branch
+select distinct C.customer_name, customer_city from customer C, borrower B, loan L 
+where C.customer_name = B.customer_name and B.loan_number = L.loan_number and 
+branch_name = 'Perryridge';
+
+
+3. Find the customers with accounts at a branch where "Hayes" has an account
+select distinct D.customer_name from depositor D, account A where D.account_number 
+= A.account_number and branch_name in (select branch_name from depositor Dh, 
+account Ah where Dh.account_number = Ah.account_number and D.customer_name = 
+'Hayes');
+
+
+4. Find the names of branch whose assets are greater than the asstes of some branch
+in "Brooklyn"
+select distinct T.branch_name from branch T, branch S where T.assets > S.assets and
+S.branch_city = 'Brooklyn';
+
+
+5. Show the name of branches having at least one account,with average balances of 
+account at each branch ,if that average is above 700
+select branch_name, avg(balance) from account group by branch_name having 
+avg(balance) > 700;
+
+
+6. Show the Names of the branch having the largest average balance
+select branch_name from account group by branch_name having avg(balance) >= 
+all(select avg(balance) from account group by branch_name);
+
+
+7. Find the name and branch name of the borrower
+select distinct B.customer_name, L.branch_name from borrower B, loan L where 
+B.loan_number = L.loan_number;
+
+
+8. Find the customers who have a loan in David branch
+select distinct customer_name from borrower, loan where borrower.loan_number = 
+loan.loan_number and branch_name = 'David' and 
+customer_name in (select customer_name from account, depositor where 
+account.account_number = depositor.account_number and branch_name = 'David');
+
+
+9. Find the customer with loan number at a branch where jonshon has a loan
+select distint customer_name, customer_city, loan_amount from borrower loan where 
+customer.loan_number = loan.loan_number and customer_name in (select customer_name 
+from account, depositor where customer_name = 'jonshon');
+
+
+
+12.Find the customers name, their city and loan amount that they borrow
+select B.customer_name, C.customer_city, L.amount from borrower B, loan L, customer
+C where B.loan_number = L.loan_number and B.customer_name= C.customer_name
+
+
+13. Find the average balance of all customers in "Harrison" having at least two 
+account.
+
+
+select avg(balance) from depositor, account, customer where depositor.customer_name
+= customer.customer_name and depositor.account_number = account.account_number and
+ customer_city = 'Harrison' group by depositor.customer_name having count (distinct
+account.account_number) >= 2;
+
+
