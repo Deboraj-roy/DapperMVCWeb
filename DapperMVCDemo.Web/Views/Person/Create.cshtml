@@ -1,0 +1,47 @@
+﻿@model Person
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h3>Add Person</h3>
+
+<a asp-controller="Person" asp-action="Index" class="my-2 btn btn-primary">Display All</a>
+
+<form asp-controller="Person" asp-action="Create" asp-antiforgery="true">
+
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label">Name</label>
+        <input asp-for="Name" type="text" class="form-control">
+
+        <span class="text-danger" asp-validation-for="Name"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Email" class="form-label">Email</label>
+        <input asp-for="Email" type="text" class="form-control">
+
+        <span class="text-danger" asp-validation-for="Email"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Address" class="form-label">
+            Address
+        </label>
+        <textarea class="form-control" asp-for="Address" rows="3"></textarea>
+
+        <span class="text-danger" asp-validation-for="Address"></span>
+    </div>
+
+    @if (TempData["msg"] != null)
+    {
+        <div class="mb-3">
+            @TempData["msg"]
+        </div>
+    }
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+</form>
+

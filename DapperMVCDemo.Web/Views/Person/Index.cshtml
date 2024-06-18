@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Person>
+
+@{
+    ViewData["Title"] = "People";
+}
+
+<h1>People List</h1>
+
+<div class="my-2">
+    <a class="btn btn-info my-2" asp-controller="Person" asp-action="Create">Add More</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in Model)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.Email</td>
+                    <td>@person.Address</td>
+                    <td>
+                        <a class="btn btn-success" asp-controller="Person" asp-action="Edit" asp-route-id=person.Id>Edit</a>
+                        @* <a class="btn btn-danger" asp-controller="People" asp-action="Delete" asp-route-id=person.Id>Delete</a> *@
+                        @* another way *@
+                        <a class="btn btn-danger" href="/Person/Delete?id=@person.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

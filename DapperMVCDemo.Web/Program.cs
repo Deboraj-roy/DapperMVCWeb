@@ -54,7 +54,7 @@ try
 
     app.MapControllerRoute(
         name: "default",
-        pattern: "{controller=Home}/{action=Index}/{id?}");
+        pattern: "{controller=Person}/{action=Index}/{id?}");
 
     Log.Information("Web Application Running...");
     app.Run();
