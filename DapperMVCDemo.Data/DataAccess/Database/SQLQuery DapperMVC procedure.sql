@@ -123,3 +123,16 @@ END
 -- delete a procedure----------
 drop proc dbo.sp_Create_Person
 
+
+-- search People a procedure----------
+
+CREATE PROCEDURE [dbo].[sp_search_People]
+    @Name nvarchar(100)
+AS
+BEGIN
+    SELECT *
+    FROM [DapperMVC].[dbo].[Person]
+    WHERE Name LIKE '%' + @Name + '%'
+END
+
+EXEC [dbo].[sp_search_People] @Name = 'Doe'

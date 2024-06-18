@@ -77,6 +77,20 @@ namespace DapperMVCDemo.Data.Repository
 
         }
 
+        public async Task<IEnumerable<Person?>> SearchAsync(string name)
+        {
+            try
+            {
+                var result = await _db.LoadData<Person, dynamic>("sp_search_People", new { Name = name });
+                return result;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return Enumerable.Empty<Person>();
+            }
+        }
+
         public async Task<bool> UpdateAsync(Person person)
         {
             try

@@ -14,5 +14,6 @@ namespace DapperMVCDemo.Data.Repository
         Task<bool> DeleteAsync(int id);
         Task<Person?> GetByIdAsync(int id);
         Task<IEnumerable<Person?>> GetAllAsync();
+        Task<IEnumerable<Person?>> SearchAsync(string name);
     }
 }

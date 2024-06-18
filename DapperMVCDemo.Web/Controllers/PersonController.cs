@@ -2,6 +2,7 @@
 using DapperMVCDemo.Domain.Entites;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Serilog;
 
 namespace DapperMVCDemo.Web.Controllers
 {
@@ -51,6 +52,7 @@ namespace DapperMVCDemo.Web.Controllers
                     var addPerson = await _personRepository.AddAsync(person);
                     if (addPerson)
                     {
+                        Log.Information("Person added successfully!");
                         TempData["success"] = "Person added successfully!";
                         return RedirectToAction(nameof(Index));
                     }
@@ -99,6 +101,7 @@ namespace DapperMVCDemo.Web.Controllers
                     var updatePerson = await _personRepository.UpdateAsync(person);
                     if (updatePerson)
                     {
+                        Log.Information("Person updated successfully!");
                         TempData["success"] = "Person updated successfully!";
                         return RedirectToAction(nameof(Index));
                     }
@@ -128,6 +131,7 @@ namespace DapperMVCDemo.Web.Controllers
             try
             {
                 await _personRepository.DeleteAsync(id);
+                Log.Information("Person deleted successfully!");
                 TempData["warning"] = "Person deleted successfully!";
                 return RedirectToAction(nameof(Index));
             }
@@ -136,6 +140,40 @@ namespace DapperMVCDemo.Web.Controllers
                 TempData["error"] = "Something went wrong!";
                 return View();
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Search(string searchString)
+        {  
+
+            if (string.IsNullOrEmpty(searchString))
+            {
+                TempData["error"] = "Please enter name! not Blank";
+                return View("_NotFoundPartial");
+            }
+            else
+            {
+                try
+                {
+                    var people = await _personRepository.SearchAsync(searchString);
+                    if (people.Count() == 0)
+                    {
+                        Log.Information("Person Not Found!");
+                        TempData["error"] = "Person Not Found!";
+                        return View("_NotFoundPartial");
+                    }
+                    Log.Information("Person Search found!");
+                    TempData["success"] = "Person Found!";
+                    return RedirectToAction(nameof(Index), people);
+                }
+                catch
+                {
+                    TempData["error"] = "Something went wrong!";
+                    return View();
+                }
+            }
+           
         }
     }
 }
