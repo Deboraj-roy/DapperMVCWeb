@@ -165,7 +165,7 @@ namespace DapperMVCDemo.Web.Controllers
                     }
                     Log.Information("Person Search found!");
                     TempData["success"] = "Person Found!";
-                    return RedirectToAction(nameof(Index), people);
+                    return View(people);
                 }
                 catch
                 {
