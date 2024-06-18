@@ -25,10 +25,10 @@
                     <td>@person.Email</td>
                     <td>@person.Address</td>
                     <td>
-                        <a class="btn btn-success" asp-controller="Person" asp-action="Edit" asp-route-id=person.Id>Edit</a>
+                        <a class="btn btn-success" asp-controller="Person" asp-action="Edit" asp-route-id=@person.Id>Edit</a>
                         @* <a class="btn btn-danger" asp-controller="People" asp-action="Delete" asp-route-id=person.Id>Delete</a> *@
                         @* another way *@
-                        <a class="btn btn-danger" href="/Person/Delete?id=@person.Id">Delete</a>
+                        <a class="btn btn-danger" href="/Person/Delete?id=@person.Id" onclick="return window.confirm('Are you sure?')">Delete</a>
                     </td>
                 </tr>
             }

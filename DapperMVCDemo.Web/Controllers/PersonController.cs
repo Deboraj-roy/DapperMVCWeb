@@ -20,17 +20,17 @@ namespace DapperMVCDemo.Web.Controllers
         public async Task<ActionResult> Index()
         {
             var people = await _personRepository.GetAllAsync();
-            TempData["success"] = "Here is people data!";
+            //TempData["success"] = "Here is people data!";
             return View(people);
         }
 
         // GET: PersonController/Details/5
-        public async Task<ActionResult> Details(int id)
-        {
-            var person = await _personRepository.GetByIdAsync(id);
-            TempData["success"] = "Here is your personal data!";
-            return View(person);
-        }
+        //public async Task<ActionResult> Details(int id)
+        //{
+        //    var person = await _personRepository.GetByIdAsync(id);
+        //    TempData["success"] = "Here is your personal data!";
+        //    return View(person);
+        //}
 
         // GET: PersonController/Create
         public async Task<ActionResult> Create()
@@ -75,21 +75,48 @@ namespace DapperMVCDemo.Web.Controllers
         // GET: PersonController/Edit/5
         public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            var person = await _personRepository.GetByIdAsync(id);
+            if (person is null)
+            { 
+                TempData["error"] = "Person Not Found!";
+                return View("_NotFoundPartial");
+
+                //return NotFound("The specified person was not found or is missing required information.");
+            }
+            TempData["success"] = "Here is your personal data!";
+            return View(person);
         }
 
         // POST: PersonController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(Person person)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var updatePerson = await _personRepository.UpdateAsync(person);
+                    if (updatePerson)
+                    {
+                        TempData["success"] = "Person updated successfully!";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    else
+                    {
+                        TempData["error"] = "Something went wrong!";
+                        return View(person);
+                    }
+                }
+                catch
+                {
+                    TempData["error"] = "Something went wrong!";
+                    return View(person);
+                }
             }
-            catch
+            else
             {
-                return View();
+                return View(person);
             }
         }
 
@@ -101,7 +128,7 @@ namespace DapperMVCDemo.Web.Controllers
             try
             {
                 await _personRepository.DeleteAsync(id);
-                TempData["success"] = "Person deleted successfully!";
+                TempData["warning"] = "Person deleted successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch

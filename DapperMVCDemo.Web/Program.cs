@@ -22,7 +22,7 @@ try
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultDapperDatabase") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
-    Log.Information("Connection String:" + connectionString);
+    //Log.Information("Connection String:" + connectionString);
 
     builder.Host.UseSerilog((ctx, lc) => lc
         .MinimumLevel.Debug()

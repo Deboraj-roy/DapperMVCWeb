@@ -1,0 +1,43 @@
+﻿@model Person
+@{
+    ViewData["Title"] = "Update Person"; 
+}
+
+<h3>Update Person</h3>
+
+<a asp-controller="Person" asp-action="Index" class="my-2 btn btn-primary">Display All</a>
+
+<form asp-controller="Person" asp-action="Edit" asp-antiforgery="true">
+
+    <input asp-for="@Model.Id" type="hidden" class="form-control">
+
+
+    <div class="mb-3">
+        <label asp-for="@Model.Name" class="form-label">Name</label>
+        <input asp-for="@Model.Name" type="text" class="form-control">
+
+        <span class="text-danger" asp-validation-for="@Model.Name"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="@Model.Email" class="form-label">Email</label>
+        <input asp-for="@Model.Email" type="text" class="form-control">
+
+        <span class="text-danger" asp-validation-for="@Model.Email"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="@Model.Address" class="form-label">
+            Address
+        </label>
+        <textarea class="form-control" asp-for="@Model.Address" rows="3"></textarea>
+
+        <span class="text-danger" asp-validation-for="@Model.Address"></span>
+    </div>
+     
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">Save</button>
+    </div>
+
+</form>
+
