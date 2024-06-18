@@ -15,6 +15,7 @@ namespace DapperMVCDemo.Web.Controllers
 
         public IActionResult Index()
         {
+            TempData["success"] = "Toastr Notification Added Successfully";
             return View();
         }
 
