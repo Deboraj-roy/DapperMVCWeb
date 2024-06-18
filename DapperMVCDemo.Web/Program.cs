@@ -1,4 +1,5 @@
 using DapperMVCDemo.Data.DataAccess;
+using DapperMVCDemo.Data.Repository;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 using Serilog.Events;
@@ -32,6 +33,7 @@ try
     // Add services to the container.
     builder.Services.AddControllersWithViews();
     builder.Services.AddTransient<ISqlDataAccess, SqlDataAccess>();
+    builder.Services.AddTransient<IPersonRepository, PersonRepository>();
 
     var app = builder.Build();
 
