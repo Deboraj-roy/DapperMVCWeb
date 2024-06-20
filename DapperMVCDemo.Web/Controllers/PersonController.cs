@@ -21,7 +21,7 @@ namespace DapperMVCDemo.Web.Controllers
         public async Task<ActionResult> Index()
         {
             var people = await _personRepository.GetAllAsync();
-            //TempData["success"] = "Here is people data!";
+            TempData["info"] = "Here is people data!";
             return View(people);
         }
 
